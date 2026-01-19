@@ -79,7 +79,7 @@ cat << 'EOF' > uconsole-sleep/usr/local/src/uconsole-sleep/find_internal_kb.py
 import os
 
 
-def find_internal_kb(ids=["feed:0000", "1eaf:0003"]):
+def find_internal_kb(ids=["1eaf:0024", "feed:0000", "1eaf:0003"]):
     usb_device_path = ""
 
     for device in os.listdir("/sys/bus/usb/devices/"):
