@@ -30,6 +30,18 @@ Detects power key events and controls the screen power state.
 
 Handles power-saving behavior based on the current screen state.
 
+## How to package and install
+
+```
+ENV_VERSION=1.0 ./make_uconsole-sleep_package.sh
+apt install python3-inotify python3-uinput
+sudo dpkg -i uconsole-sleep.deb
+```
+
+## Configuration
+
+See `/etc/uconsole-sleep/config` for configuration options.
+
 ## More Information
 
 Discussion and updates are available on the ClockworkPi forum:  

@@ -1,0 +1,15 @@
+[Unit]
+Description=Sleep Power Control Based on Display and Sleep State
+After=basic.target
+
+[Service]
+EnvironmentFile=/etc/uconsole-sleep/config
+ExecStart=/usr/local/bin/sleep_power_control
+Restart=always
+User=root
+Group=root
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=basic.target

@@ -1,0 +1,31 @@
+Ver1.4
+  - drop usage of `pyinstaller` (services are now shell wrappers, not compiled binaries)
+  - replace inotify simple with inotify
+  - source files extracted to `src/` - no longer inlined as heredocs
+  - no need to build package as `root`
+  - translate Korean to English in error message 
+  - improve documentation
+  - fixed logging (now the print statements appear in journal)
+  - add CHANGES file
+
+Ver1.3
+  - autodetect path to power key
+
+Ver1.2
+  - Add customization (`/etc/uconsole-sleep/config`)
+  - Power saving CPU freq now follows a user-specified value, not available value.
+
+Ver1.1
+  - Add feature hold power key to trigger `KEY_POWER` (interactive power menu)
+
+Ver1.0
+  - Official keyboard firmware detection
+  - Apply timeout poll for desktop sleep mode detection
+  - Use the `detect` flag instead of `on` forcing LCD turned on.
+
+Ver0.3
+  - Emit WakeUp Event after turn on screen
+  - Add DRM control to turn off screen (BL,LCD) (not blank)
+
+Ver0.2 
+  - initial release

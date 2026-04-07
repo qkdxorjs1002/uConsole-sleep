@@ -1,0 +1,25 @@
+###########################################################################
+#                    uConsole-Sleep configuration file                    #
+###########################################################################
+
+### HOLD_TRIGGER_SEC --- [0.0~] --- Time(sec) to trigger power interactive
+# default 0.7
+#HOLD_TRIGGER_SEC=1.3
+
+### SAVING_CPU_FREQ --- [100,100~] <min,max> --- Freq(MHz) for power saving
+# default 100,100 (depends on cpuinfo)
+#SAVING_CPU_FREQ=300,600
+
+### DISABLE_POWER_OFF_DRM --- [yes/no] --- Disable turn off DRM on sleep
+###  - If you have some issue with recover screen, you can set this "yes"
+# default no
+#DISABLE_POWER_OFF_DRM=yes
+
+### DISABLE_POWER_OFF_KB --- [yes/no] --- Disable turn off Keyboard on sleep
+###  - If you set this to "yes", the keyboard can turn on/off the light.
+# default no
+#DISABLE_POWER_OFF_KB=yes
+
+### DISABLE_CPU_MIN_FREQ --- [yes/no] --- Disable set cpu freq max to min
+# default no
+#DISABLE_CPU_MIN_FREQ=yes
