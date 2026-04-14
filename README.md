@@ -1,4 +1,4 @@
-# uConsole-sleep
+# uConsole-sleep v1.4
 ### Sleep Service Package for uConsole
 
 This service is built for **Ubuntu 22.04** and implemented in **Python**.
@@ -29,6 +29,58 @@ Detects power key events and controls the screen power state.
 `/usr/local/bin/sleep_power_control`
 
 Handles power-saving behavior based on the current screen state.
+
+### sleep_display_control
+`/usr/local/bin/sleep_display_control` (shared library used by both services)
+
+Manages DRM/framebuffer display power and backlight control.
+
+## How to package and install
+
+Install dependencies first:
+
+```
+sudo apt install python3-inotify python3-uinput
+```
+
+Build and install the package:
+
+```
+ENV_VERSION=1.4 ./make_uconsole-sleep_package.sh
+sudo dpkg -i uconsole-sleep.deb
+```
+
+## Service management
+
+```
+# Enable and start services (done automatically on install)
+sudo systemctl enable sleep-remap-powerkey sleep-power-control
+sudo systemctl start sleep-remap-powerkey sleep-power-control
+
+# Check status
+systemctl status sleep-remap-powerkey
+systemctl status sleep-power-control
+
+# View logs
+journalctl -u sleep-remap-powerkey -f
+journalctl -u sleep-power-control -f
+
+# Stop and disable
+sudo systemctl stop sleep-remap-powerkey sleep-power-control
+sudo systemctl disable sleep-remap-powerkey sleep-power-control
+```
+
+## Configuration
+
+Configuration file: `/etc/uconsole-sleep/config`
+
+| Option | Default | Description |
+|---|---|---|
+| `HOLD_TRIGGER_SEC` | `0.7` | Hold duration (seconds) to trigger power interactive menu |
+| `SAVING_CPU_FREQ` | `100,100` | CPU frequency (MHz) `<min,max>` applied during power saving |
+| `DISABLE_POWER_OFF_DRM` | `no` | Disable turning off DRM on sleep (set `yes` if screen recovery has issues) |
+| `DISABLE_POWER_OFF_KB` | `no` | Disable turning off keyboard on sleep (set `yes` to allow keyboard to control its backlight) |
+| `DISABLE_CPU_MIN_FREQ` | `no` | Disable setting CPU max frequency to minimum during sleep |
 
 ## More Information
 

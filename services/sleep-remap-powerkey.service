@@ -1,0 +1,16 @@
+[Unit]
+Description=Sleep Remap PowerKey
+After=basic.target
+
+[Service]
+EnvironmentFile=/etc/uconsole-sleep/config
+ExecStartPre=/sbin/modprobe uinput
+ExecStart=/usr/local/bin/sleep_remap_powerkey
+Restart=always
+User=root
+Group=root
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=basic.target
