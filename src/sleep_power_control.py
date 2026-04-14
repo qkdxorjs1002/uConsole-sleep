@@ -32,9 +32,13 @@ def control_by_state(state):
         with open(os.path.join(kb_device_path, "power/control"), "w") as f:
             f.write("on")
     else:
-        with open(os.path.join(kb_device_path, "power/control"), "w") as f:
-            f.write("auto")
-        if not DISABLE_POWER_OFF_KB:
+        if DISABLE_POWER_OFF_KB:
+            # Only set autosuspend when not unbinding — unbinding handles power-off
+            # and writing "auto" with autosuspend_delay_ms=0 before unbind triggers
+            # a failed USB suspend (EPROTO, error -71).
+            with open(os.path.join(kb_device_path, "power/control"), "w") as f:
+                f.write("auto")
+        else:
             with open(os.path.join(usb_driver_path, "unbind"), "w") as f:
                 f.write(kb_device_id)
             print("kb power state: unbind")
