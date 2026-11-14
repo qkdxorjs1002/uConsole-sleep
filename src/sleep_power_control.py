@@ -1,3 +1,4 @@
+import glob
 import os
 import inotify.adapters
 import inotify.constants
@@ -51,6 +52,35 @@ def control_by_state(state):
             print(f"cpu freq max: {saving_cpu_freq_max}")
 
 
+def external_display_connected():
+    # any connected DRM connector other than the internal DSI panel
+    for p in glob.glob("/sys/class/drm/card*-*/status"):
+        name = p.split("/")[-2]
+        if "-DSI-" in name or "Writeback" in name:
+            continue
+        try:
+            with open(p) as f:
+                if f.read().strip() == "connected":
+                    return True
+        except OSError:
+            pass
+    return False
+
+
+# Polls (about one second each) the "screen off, no external display" state has to last
+# before power saving starts. After an external monitor is unplugged, the HDMI connector
+# disappears about a second before display-auto turns the internal panel back on, and a
+# short unbind/bind of the keyboard in between is better avoided.
+SAVING_DEBOUNCE_POLLS = 3
+
+
+def power_state(screen_state):
+    # True = full power. A blanked internal panel is not a reason to throttle the CPU
+    # and cut the keyboard while an external display is in use (display-auto turns the
+    # panel off then).
+    return screen_state != "4" or external_display_connected()
+
+
 backlight_path = find_backlight()
 # drm_panel_path = find_drm_panel()
 kb_device_path = find_internal_kb()
@@ -99,7 +129,7 @@ with open(backlight_bl_path, "r") as f:
 #    screen_state = f.read().strip()
 
 try:
-    control_by_state(screen_state != "4")
+    control_by_state(power_state(screen_state))
 #    control_by_state(screen_state != "disabled")
 except Exception as e:
     print(f"Error occurred: {e}, on init. ignored")
@@ -109,7 +139,8 @@ i.add_watch(backlight_bl_path, mask=inotify.constants.IN_MODIFY)
 
 print(f"Monitoring {backlight_bl_path} for changes...")
 
-last_screen_state = ""
+last_power_state = None
+pending_polls = 0
 while True:
     try:
         list(i.event_gen(yield_nones=False, timeout_s=1))
@@ -117,11 +148,18 @@ while True:
         with open(backlight_bl_path, "r") as f:
             screen_state = f.read().strip()
 
-        if screen_state == last_screen_state:
+        state = power_state(screen_state)
+        if state == last_power_state:
+            pending_polls = 0
             continue
-        last_screen_state = screen_state
+        if not state:
+            pending_polls += 1
+            if pending_polls < SAVING_DEBOUNCE_POLLS:
+                continue
+        pending_polls = 0
+        last_power_state = state
 
-        control_by_state(screen_state != "4")
+        control_by_state(state)
 
     except Exception as e:
         print(f"Error occurred: {e}")
